@@ -1,13 +1,8 @@
 'use strict';
 
-/*document.getElementById('test-button').addEventListener('click', function(){
-    const links = document.querySelectorAll('.titles a');
-    console.log('links:', links);
-  });*/
-  
   const titleClickHandler = function(event){
+    event.preventDefault();
     const clickedElement = this;
-    console.log(event);
   
     /* remove class 'active' from all article links  */
     const activeLinks = document.querySelectorAll('.titles a.active');
@@ -18,7 +13,6 @@
     /* add class 'active' to the clicked link */
     clickedElement.classList.add('active');
 
-    console.log('clickedElement:', clickedElement);
     /* remove class 'active' from all articles */
     const activeArticles = document.querySelectorAll('.post.active');
 
@@ -26,12 +20,12 @@
       activeArticle.classList.remove('active');
     }
     /* get 'href' attribute from the clicked link */
-    const activeArticleId = clickedElement.getAttribute('href');
+    const articleSelector = clickedElement.getAttribute('href');
 
     /* find the correct article using the selector (value of 'href' attribute) */
-    const correctArticle = document.querySelector(activeArticleId);
+    const targetArticle = document.querySelector(articleSelector);
     /* add class 'active' to the correct article */
-    correctArticle.classList.add('active');
+    targetArticle.classList.add('active');
   }
   
   
@@ -44,14 +38,13 @@
 function generateTitleLinks(){
 
   /* remove contents of titleList */
-   const titleList = document.querySelector(optTitleListSelector); 
-    function clearTitleList(){
-      titleList.innerHTML = '';
-    }
-    clearTitleList();
-   
+  const titleList = document.querySelector(optTitleListSelector); 
+    
+    titleList.innerHTML = '';
+  
+    
   /* for each article */
-    const articles = document.querySelectorAll(optArticleSelector);
+    let articles = document.querySelectorAll(optArticleSelector);
     let html = '';
 
     for(let article of articles) {
@@ -66,11 +59,11 @@ function generateTitleLinks(){
     /* create HTML of the link */
     const linkHTML = '<li><a href="#' + articleId +'"><span>'+ articleTitle +'</span></a></li>';
     /* insert link into titleList */
-    titleList.innerHTML = titleList.innerHTML + linkHTML;
+    html = html + linkHTML;
     }
     titleList.innerHTML = html;
+
     const links = document.querySelectorAll('.titles a');
-    console.log(links);
   
     for(let link of links){
       link.addEventListener('click', titleClickHandler);
