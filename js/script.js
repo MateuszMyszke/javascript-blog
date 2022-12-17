@@ -32,7 +32,11 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
-  optArticleAuthorSelector ='.post .post-author';
+  optArticleAuthorSelector ='.post .post-author',
+  optTagsListSelector = '.tags.list',
+  optCloudClassCount = 5,
+  optCloudClassPrefix = 'tag-size-';
+  
 
 function generateTitleLinks(customSelector = ''){
 
@@ -73,6 +77,8 @@ generateTitleLinks();
 
 
 function generateTags(){
+  /* [NEW] create a new variable allTags with an empty object */
+  let allTags = {};
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
   /* START LOOP: for every article: */
@@ -91,13 +97,42 @@ function generateTags(){
     /* generate HTML of the link */
       const tagHTML = '<li><a href="#tag' + tag + '">'+ tag +'</a></li>';
       /* add generated code to html variable */
-      html = html + tagHTML + ' ';
-      /* END LOOP: for each tag */
+      html = html + tagHTML+ ' ';
+      /* [NEW] check if this link is NOT already in allTags */
+      if(!allTags[tag]){
+        /* [NEW] add generated code to allTags array */
+        allTags[tag] = 1;
+      } else {
+        allTags[tag]++;
+      }
+      /* [DONE] END LOOP: for each tag */
     }
-    /* insert HTML of all the links into the tags wrapper */
+
+    /* [DONE] insert HTML of all the links into the tags wrapper */
     tagsWrapper.innerHTML = html;
-    /* END LOOP: for every article: */
+
+    /* [DONE] END LOOP: for every article: */
   }
+  
+  /* [NEW] find list of tags in right column */
+  
+  const tagList = document.querySelector(optTagsListSelector);
+  
+  const tagsParams = calculateTagsParams(allTags);
+  console.log('tagsParams:', tagsParams);
+
+  /* [NEW] create variable for all links HTML code */
+  let allTagsHTML = '';
+  
+  /* [NEW] START LOOP: for each tag in allTags: */
+  for(let tag in allTags){
+    /* [NEW] generate code of a link and add it to allTagsHTML */
+    allTagsHTML += '<a href="#tag-' + tag + '">' + tag + ' (' + allTags[tag] + ') ' + '</a>';
+  }
+  /* [NEW] END LOOP: for each tag in allTags: */
+  
+  /*[NEW] add HTML from allTagsHTML to tagList */
+  tagList.innerHTML = allTagsHTML;
 }
 
 function generateAuthors(){
@@ -124,6 +159,21 @@ function generateAuthors(){
   }
 }
 
+function calculateTagsParams(tags){
+  const params = {max: 0, min: 99999 };
+  for(let tag in tags){
+    if(tags[tag] > params.max){
+      params.max = tags[tag];
+    }
+    if(tags[tag] < params.min){
+      params.min = tags[tag];
+    }
+  }
+  
+  return params;
+}
+
+calculateTagsParams();
 generateTags();
 generateAuthors();
 
