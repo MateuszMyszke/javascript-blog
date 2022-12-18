@@ -33,6 +33,7 @@ const optArticleSelector = '.post',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
   optArticleAuthorSelector ='.post .post-author',
+  optAuthorsListSelector = '.authors.list',
   optTagsListSelector = '.tags.list',
   optCloudClassCount = 5,
   optCloudClassPrefix = 'tag-size-';
@@ -159,6 +160,8 @@ function generateTags(){
 addClickListenersToTags();
 
 function generateAuthors(){
+  //new create
+  let allAuthors = {};
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
   /* START LOOP: for every article: */
@@ -169,17 +172,32 @@ function generateAuthors(){
     /* make html variable with empty string */
     let html = '';
     /* get tags from data-author attribute */
-    const articleAuthor = article.getAttribute('data-author');
+    const author = article.getAttribute('data-author');
     
     /* generate HTML of the link */
-    const authorHTML = '<p class="post-author"><a href="#author-' + articleAuthor + '">' + articleAuthor + '</a></p>';
+    const authorHTML = '<p class="post-author"><a href="#author-' + author + '">' + author + '</a></p>';
     /* add generated code to html variable */
     html = html + authorHTML;
-  
+    /* [NEW] check if this link is NOT already in allTags */
+    if(!allAuthors[author]){
+      /* [NEW] add generated code to allTags array */
+      allAuthors[author] = 1;
+    } else {
+      allAuthors[author]++;
+    }
+
+
     /* insert HTML of all the links into the tags wrapper */
     authorWrapper.innerHTML = html;
     /* END LOOP: for every article: */
   }
+  const authorsList = document.querySelector(optAuthorsListSelector);
+  const authorsParams = calculateTagsParams(allAuthors);
+  let allAuthorsHTML = '';
+  for(let author in allAuthors){
+    allAuthorsHTML += '<a href="#tag-' + author + '" class="' + optCloudClassPrefix + calculateTagClass(allAuthors[author], authorsParams) + '">' + author + ' (' + allAuthors[author] + ') ' + '</a>';
+  }
+  authorsList.innerHTML = allAuthorsHTML;
 }
 
 generateTags();
